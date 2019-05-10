@@ -1,3 +1,63 @@
+/**********************************************
+ * STARTER CODE
+ **********************************************/
+
+/**
+ * shuffle()
+ * Shuffle the contents of an array
+ *   depending the datatype of the source
+ * Makes a copy. Does NOT shuffle the original.
+ * Based on Steve Griffith's array shuffle prototype
+ * @Parameters: Array or string
+ * @Return: Scrambled Array or string, based on the provided parameter
+ */
+function shuffle (src) {
+  const copy = [...src]
+
+  const length = copy.length
+  for (let i = 0; i < length; i++) {
+    const x = copy[i]
+    const y = Math.floor(Math.random() * length)
+    const z = copy[y]
+    copy[i] = z
+    copy[y] = x
+  }
+
+  if (typeof src === 'string') {
+    return copy.join('')
+  }
+
+  return copy
+}
+
+/**
+ * help()
+ * Displays the game instructions.
+ * @Return: String
+ */
+
+function help () {
+  return `Welcome to Scramble. 
+The game where you unscramble letters to make words.
+
+Once you start the game, you will be given a scrambled word.
+If you correctly guess the word, you will receive a point.
+If you guess incorrectly you will receive a strike.
+You can also pass on a word. 
+
+To start a new game use start().
+To make guess use guess('word').
+To skip a word use pass().
+To show these instructions again use help().`
+}
+
+// Displays the instructions when the page loads.
+console.log(help())
+
+/**********************************************
+ * YOUR CODE BELOW
+ **********************************************/
+
 /**
  * 1. Create a list of words for the scramble game
  */
@@ -232,6 +292,7 @@ const words = [
  * 2. Create a game object to hold:
  * - If a game is active
  * - The current word
+ * - The current scrambled word
  * - The number of strikes
  * - The number of points
  * - The maximum number of strikes allowed
@@ -240,6 +301,7 @@ const words = [
 const game = {
   active: false,
   word: null,
+  scrambled: null,
   strikes: 0,
   points: 0,
   maxStrikes: 3,
@@ -247,34 +309,10 @@ const game = {
   passes: 0
 }
 
-/**
- * shuffle()
- * Shuffle the contents of an array
- *   depending the datatype of the source
- * Makes a copy. Does NOT shuffle the original.
- * Based on Steve Griffith's array shuffle prototype
- * @Parameters: Array or string
- * @Return: Array a shuffled version of the array
- */
-function shuffle (src) {
-  const copy = [...src]
-
-  const length = copy.length
-  for (let i = 0; i < length; i++) {
-    const x = copy[i]
-    const y = Math.floor(Math.random() * length)
-    const z = copy[y]
-    copy[i] = z
-    copy[y] = x
-  }
-
-  return copy
-}
-
 function getWord () {
   game.word = game.words.splice(0, 1)[0]
 
-  return shuffle(game.word).join('').toUpperCase()
+  return shuffle(game.word).toUpperCase()
 }
 
 /**
@@ -290,8 +328,9 @@ function start () {
     game.strikes = 0
     game.passes = 0
     game.words = shuffle(words).slice(0, 10)
+    game.scrambled = getWord()
 
-    return getWord()
+    return game.scrambled
   } else {
     console.warn(`A game has already been started.`)
   }
@@ -303,8 +342,9 @@ function guess (word) {
       game.points++
 
       if (game.words.length) {
+        game.scrambled = getWord()
         console.warn(`Correct! Current score: ${game.points}`)
-        return `Next word: \n\n${getWord()}`
+        return `Next word: \n\n${game.scrambled}`
       } else {
         game.active = false
         console.warn(`There are no more words. Game over. \nFinal score: ${game.points}`)
@@ -319,7 +359,7 @@ function guess (word) {
         return `Please use start() to start a new game.`
       } else {
         console.warn(`Wrong! You have ${game.maxStrikes - game.strikes} strikes left.`)
-        return `Next word: \n\n${getWord()}`
+        return `Current word: \n\n${game.scrambled}`
       }
     }
   } else {
@@ -333,25 +373,14 @@ function pass () {
     if (game.passes < game.maxPasses) {
       game.passes++
 
-      game.words.splice(Math.floor(Math.random() * game.words.length), 0, game.word)
-
       console.warn(`You used a pass. You have ${game.maxPasses -
         game.passes} passes left.`)
       return `Next word: \n\n${getWord()}`
     } else {
-      return `You have no passes left.`
+      console.warn(`You have no passes left.`)
+      return `Current word: \n\n${game.scrambled}`
     }
   } else {
     return `There is no current game. Please use start() to start a new game.`
   }
 }
-
-function help () {
-  return `Welcome to Scramble. The game where you unscramble letters to make words. \nOnce you start the game, you will be given a scrambled word. If you correctly guess the word, you will receive a point. If you guess incorrectly you will receive a strike. You can also pass on a word. Passing adds the word back to the list. You can pass ${
-    game.maxPasses
-  } times. After the ${
-    game.maxStrikes
-  } strikes the game ends. \n\nTo start a new game use start().\nTo make guess use guess('word').\nTo skip a word use pass().\nTo show these instructions again use help().`
-}
-
-console.log(help())
