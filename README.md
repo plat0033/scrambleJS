@@ -22,7 +22,7 @@ After the games ends, the player will be present with a total number points earn
 
 The following requirement must be met in order to complete the assignment successfully:
 
-1. Download the [Scramble starter files](https://github.com/imdac/mtm6302-scramble/archive/master.zip). The files contain `index.html`, `style.css`, and `scramble.js`. **All changes for this assignment will be made to the `scramble.js` file.**
+1. Clone this repository from GitHub and use the provided files to complete the assignment. The files contain `index.html`, `style.css`, and `scramble.js`. **All changes for this assignment will be made to the `scramble.js` file.**
 1. Create a words array to hold the words that will be used in the game. To keep things simple do NOT include words with spaces or special characters. The array should include at least 10 words. 
 2. Create a game object. The game object will hold the current game's status including but not limited to:
     1. The game active status
